@@ -18,14 +18,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         setContentView(binding.root)
 
         binding.bottomNavigation.setOnNavigationItemSelectedListener(this)
-//        binding.bottomNavigation.selectedItemId =
+        binding.bottomNavigation.selectedItemId = R.id.action_todoitems
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.action_todoitems -> {
                 var todoFragment = TodoFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.animateToEnd, todoFragment).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content, todoFragment).commit()
                 return false
             }
         }

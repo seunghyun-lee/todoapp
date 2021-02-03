@@ -1,41 +1,30 @@
 package com.devbuildrun.todoapp.navigation
 
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.room.Room
-import com.devbuildrun.todoapp.MainActivity
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.devbuildrun.todoapp.R
 import com.devbuildrun.todoapp.data.AppDatabase
+import com.devbuildrun.todoapp.data.Todoitem
+import com.devbuildrun.todoapp.databinding.FragmentTodoBinding
+import kotlinx.android.synthetic.main.fragment_todo.view.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TodoFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TodoFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
     private var appDatabase: AppDatabase? = null
+    private var todoList = listOf<Todoitem>()
+    private var mAdapter: TodoItemRecyclerViewAdapter? = null
+    private var _binding: FragmentTodoBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-
 
     }
 
@@ -43,40 +32,58 @@ class TodoFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_todo, container, false)
-    }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is MainActivity) {
-            appDatabase = AppDatabase.getInstance(context)
-        }
+        var view = LayoutInflater.from(activity).inflate(R.layout.fragment_todo, container, false)
 
+        appDatabase = context?.let { AppDatabase.getInstance(it) }
         val r = Runnable {
-            // 데이터 읽고 쓸때 쓰레드 사용
+            try {
+                todoList = appDatabase?.todoitemDao()?.getAll()!!
+
+            } catch (e: Exception) {
+                Log.d("tag", " Error - $e")
+            }
         }
+
         val thread = Thread(r)
         thread.start()
+
+        view.mRecyclerView.adapter = TodoItemRecyclerViewAdapter(todoList)
+        view.mRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TodoFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TodoFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onDestroy() {
+        AppDatabase.destroyInstance()
+        super.onDestroy()
+    }
+
+    inner class TodoItemRecyclerViewAdapter(val todos: List<Todoitem>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            var view = LayoutInflater.from(parent.context).inflate(R.layout.item_todo, parent, false)
+            return CustomViewHolder(view)
+        }
+
+        inner class CustomViewHolder(view: View): RecyclerView.ViewHolder(view)
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            var viewholder = (holder as CustomViewHolder).itemView
+
+            val mTitle = viewholder.findViewById<TextView>(R.id.itemName)
+            mTitle.text = todos[position].toString()
+        }
+
+        override fun getItemCount(): Int {
+            return todos.size
+        }
+
     }
 }

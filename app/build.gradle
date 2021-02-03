@@ -18,6 +18,10 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+//
+//    viewBinding {
+//        enabled = true
+//    }
 
     buildTypes {
         release {
@@ -30,8 +34,8 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildFeatures {
-        viewBinding true
-        dataBinding true
+        viewBinding = true
+        dataBinding = true
     }
     packagingOptions {
         exclude 'META-INF/atomicfu.kotlin_module'
