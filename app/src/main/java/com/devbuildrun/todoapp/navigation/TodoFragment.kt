@@ -1,5 +1,6 @@
 package com.devbuildrun.todoapp.navigation
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ import com.devbuildrun.todoapp.R
 import com.devbuildrun.todoapp.data.AppDatabase
 import com.devbuildrun.todoapp.data.Todoitem
 import com.devbuildrun.todoapp.databinding.FragmentTodoBinding
+import kotlinx.android.synthetic.main.fragment_todo.*
 import kotlinx.android.synthetic.main.fragment_todo.view.*
 
 class TodoFragment : Fragment() {
@@ -36,9 +38,17 @@ class TodoFragment : Fragment() {
         var view = LayoutInflater.from(activity).inflate(R.layout.fragment_todo, container, false)
 
         appDatabase = context?.let { AppDatabase.getInstance(it) }
+        mAdapter = TodoItemRecyclerViewAdapter(todoList)
+
         val r = Runnable {
             try {
                 todoList = appDatabase?.todoitemDao()?.getAll()!!
+                mAdapter = TodoItemRecyclerViewAdapter(todoList)
+                mAdapter!!.notifyDataSetChanged()
+
+                mRecyclerView.adapter = mAdapter
+                mRecyclerView.layoutManager = LinearLayoutManager(activity)
+                mRecyclerView.setHasFixedSize(true)
 
             } catch (e: Exception) {
                 Log.d("tag", " Error - $e")
@@ -48,9 +58,11 @@ class TodoFragment : Fragment() {
         val thread = Thread(r)
         thread.start()
 
-        view.mRecyclerView.adapter = TodoItemRecyclerViewAdapter(todoList)
-        view.mRecyclerView.layoutManager = LinearLayoutManager(activity)
-
+//        mAddBtn.setOnClickListener {
+//            val i = Intent(this, AddtodoActivity::class.java)
+//            startActivity(i)
+//            finish
+//        }
 
         return view
     }

@@ -2,18 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_calendar"
+        android:icon="@drawable/ic_baseline_calendar_today_24"
         android:enabled="true"
         android:title="calendar"/>
     <item
         android:id="@+id/action_todoitems"
+        android:icon="@drawable/ic_baseline_view_list_24"
         android:enabled="true"
         android:title="todo"/>
     <item
         android:id="@+id/action_note"
+        android:icon="@drawable/ic_baseline_note_24"
         android:enabled="true"
         android:title="note"/>
     <item
         android:id="@+id/action_account"
+        android:icon="@drawable/ic_baseline_account_box_24"
         android:enabled="true"
         android:title="account"/>
 </menu>
