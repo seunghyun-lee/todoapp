@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -58,11 +59,13 @@ class TodoFragment : Fragment() {
         val thread = Thread(r)
         thread.start()
 
-//        mAddBtn.setOnClickListener {
-//            val i = Intent(this, AddtodoActivity::class.java)
-//            startActivity(i)
-//            finish
-//        }
+        val addtidobtn = view.findViewById<Button>(R.id.mAddBtn)
+
+        addtidobtn.setOnClickListener {
+            val intent = Intent(activity, AddtodoActivity::class.java)
+            startActivity(intent)
+
+        }
 
         return view
     }
@@ -90,7 +93,7 @@ class TodoFragment : Fragment() {
             var viewholder = (holder as CustomViewHolder).itemView
 
             val mTitle = viewholder.findViewById<TextView>(R.id.itemName)
-            mTitle.text = todos[position].toString()
+            mTitle.text = todos[position].title.toString()
         }
 
         override fun getItemCount(): Int {
